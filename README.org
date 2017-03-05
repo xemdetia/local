@@ -1,0 +1,16 @@
+* xemdetia's emacs local configuration
+
+  This is a personal configuration file focusing on consistency
+  between Linux and Windows as platforms.
+
+  I am not expecting contributors at any level. This is more an
+  example project for other people to enhance their things.
+* Install
+
+  1. =cd ~/.emacs.d/=
+  2. =git clone https://github.com/xemdetia/local.git=
+  3. Edit your =.emacs=
+* Notes
+
+  - If do not have a =init_cmdproxy.exe.sh= file, it will copy one
+    into =~/.emacs.d=.
