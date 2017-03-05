@@ -34,17 +34,19 @@ By default it is '10.0' to match Windows 10")
   "Maps to environment variable WindowsSDKLibVersion.
 Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
 
+(defvar-local local-visual-studio--prefix-list
+  '("HKLM\\SOFTWARE\\Wow6432Node"
+    "HKCU\\SOFTWARE\\Wow6432Node"
+    "HKLM\\SOFTWARE"
+    "HKCU\\SOFTWARE")
+  "This is a common list copied with `copy-sequence' and is extracted from the visual studio batch files. It seems necessary to handle registry complexity on various versions of windows, and is provided in the order in `local-visual-studio.el'. It is not recommended to modify this list.")
+
 ;;; Code:
 (defun local-visual-studio--init-windows-sdk-dir ()
-  "Initialize `local-visual-studio:windows-sdk-dir'.  This is based on `local-visual-studio:windows-sdk-version'."
+  "Initialize `local-visual-studio:windows-sdk-dir'.  This is based on `local-visual-studio:windows-sdk-version'.  Use the prefix-list strategy."
   (let ((reg-path (concat "\\Microsoft\\Microsoft SDKs\\Windows\\v" ; registry key has 'v'
 			  local-visual-studio:windows-sdk-version))
-	; this list is a visual studio strategy of mitigating registry
-	; weirdness
-	(prefix-list '("HKLM\\SOFTWARE\\Wow6432Node"
-		       "HKCU\\SOFTWARE\\Wow6432Node"
-		       "HKLM\\SOFTWARE"
-		       "HKCU\\SOFTWARE"))
+	(prefix-list (copy-sequence local-visual-studio--prefix-list))
 	(seeking t))
     (while (and (> (length prefix-list) 0)
 		seeking)
