@@ -7,14 +7,15 @@
 
 ;;; Code:
 (let ((default-directory  "~/.emacs.d/local/"))
-  (normal-top-level-add-to-load-path '("local-emacs-startup" "local-keys" "local-windows-nt"))
+  (normal-top-level-add-to-load-path '("local-emacs-startup" "local-keys" "local-windows-nt" "local-visual-studio"))
   (defvar flycheck-emacs-lisp-load-path 'inherit))
 
 ;;; Require sub-packages:
 (require 'local-emacs-startup)
 (require 'local-keys)
-(if (eq system-type 'windows-nt)
-    (require 'local-windows-nt))
+(when (eq system-type 'windows-nt)
+  (require 'local-windows-nt)
+  (require 'local-visual-studio))
 
 (provide 'local-init)
 ;;; local-init.el ends here
