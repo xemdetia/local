@@ -75,7 +75,11 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
 
 (defun local-visual-studio-install ()
   "Install visual studio environment into Emacs session."
-  (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir))
+  (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir)
+  ; PATH
+  (setenv "PATH" (concat (concat local-visual-studio:windows-sdk-dir "bin\\x86;") (getenv "PATH")))
+  (add-to-list 'exec-path (replace-regexp-in-string "\\\\" "/" (concat local-visual-studio:windows-sdk-dir "bin\\x86")))
+  t)
 
 ;;; Initialization:
 (local-visual-studio--init-windows-sdk-dir)
