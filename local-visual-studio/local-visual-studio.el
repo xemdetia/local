@@ -56,13 +56,12 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
 	(seeking t))
     (while (and (> (length prefix-list) 0)
 		seeking)
-      (when (setq var
-		  (load-windows-nt--get-registry-value
-		   (concat (pop prefix-list) path)
-		   key))
+      (when (set (intern-soft (symbol-name var))
+		 (load-windows-nt--get-registry-value
+		  (concat (pop prefix-list) path)
+		  key))
 	(setq seeking nil)))
-      (message (concat "help: " var))
-      (not seeking))) ; not looking? found one
+    (not seeking))) ; not looking? found one
 
 (defun local-visual-studio--init-windows-sdk-dir ()
   "Initialize `local-visual-studio:windows-sdk-dir'.  This is based on `local-visual-studio:windows-sdk-version'.  Use the prefix-list strategy."
@@ -73,6 +72,14 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
      'local-visual-studio:windows-sdk-dir
      reg-path
      "InstallationFolder")))
+
+(defun local-visual-studio-install ()
+  "Install visual studio environment into Emacs session."
+  (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir))
+
+;;; Initialization:
+(local-visual-studio--init-windows-sdk-dir)
+(local-visual-studio-install)
 
 (provide 'local-visual-studio)
 ;;; local-visual-studio.el ends here
