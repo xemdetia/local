@@ -6,11 +6,6 @@
 ;; are unique to Windows.  By loading this file you are checking that
 ;; you are on a Windows NT system first.
 
-(defvar load-windows-nt:visual-studio-version "14.0"
-  "Determine what version of Visual Studio to extract from the registry.
-
-Defaults to '14.0' which is equivalent to Visual Studio 2015.")
-
 ;;; Code:
 (defun load-windows-nt--install-shell-file ()
   "Copy a shell file to emacs.d for CMD.exe.
