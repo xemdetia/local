@@ -17,5 +17,7 @@ action to occur on start."
 	     (file-exists-p "~/.emacs.d/local/local-windows-nt/init_cmdproxy.exe.sh"))
 	(copy-file "~/.emacs.d/local/local-windows-nt/init_cmdproxy.exe.sh" "~/.emacs.d/")))
 
+(load-windows-nt--install-shell-file)
+
 (provide 'local-windows-nt)
 ;;; local-windows-nt.el ends here
