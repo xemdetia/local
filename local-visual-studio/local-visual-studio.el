@@ -34,6 +34,12 @@ By default it is '10.0' to match Windows 10")
   "Maps to environment variable WindowsSDKLibVersion.
 Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
 
+(defvar local-visual-studio:windows-sdk-exec-path-x86 ""
+  "Maps to environment variable WindowsSDK_ExecutablePath_x86.")
+
+(defvar local-visual-studio:windows-sdk-exec-path-x64 ""
+  "Maps to environment variable WindowsSDK_ExecutablePath_x64.")
+
 (defvar-local local-visual-studio--prefix-list
   '("HKLM\\SOFTWARE\\Wow6432Node"
     "HKCU\\SOFTWARE\\Wow6432Node"
