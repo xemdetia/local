@@ -48,21 +48,31 @@ Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
   "This is a common list copied with `copy-sequence' and is extracted from the visual studio batch files. It seems necessary to handle registry complexity on various versions of windows, and is provided in the order in `local-visual-studio.el'. It is not recommended to modify this list.")
 
 ;;; Code:
-(defun local-visual-studio--init-windows-sdk-dir ()
-  "Initialize `local-visual-studio:windows-sdk-dir'.  This is based on `local-visual-studio:windows-sdk-version'.  Use the prefix-list strategy."
-  (let ((reg-path (concat "\\Microsoft\\Microsoft SDKs\\Windows\\v" ; registry key has 'v'
-			  local-visual-studio:windows-sdk-version))
-	(prefix-list (copy-sequence local-visual-studio--prefix-list))
+(defun local-visual-studio--setq-registry-prefix-list (var path key)
+  "Directly set VAR from registry PATH and KEY.
+
+This uses the local prefix-list to find the first match of a PATH KEY using the visual studio specific prefix list for paths.  This is duplicated constantly through the batch files as helpers for various subroutines, and would have to be done here as well if not factored out."
+  (let ((prefix-list (copy-sequence local-visual-studio--prefix-list))
 	(seeking t))
     (while (and (> (length prefix-list) 0)
 		seeking)
-      (when (setq local-visual-studio:windows-sdk-dir
+      (when (setq var
 		  (load-windows-nt--get-registry-value
-		   (concat (pop prefix-list) reg-path)
-		   "InstallationFolder"))
-	(setq seeking nil)
-      )
-    (not seeking)))) ; not looking? found one
+		   (concat (pop prefix-list) path)
+		   key))
+	(setq seeking nil)))
+      (message (concat "help: " var))
+      (not seeking))) ; not looking? found one
+
+(defun local-visual-studio--init-windows-sdk-dir ()
+  "Initialize `local-visual-studio:windows-sdk-dir'.  This is based on `local-visual-studio:windows-sdk-version'.  Use the prefix-list strategy."
+  (let ((reg-path ; registry key has 'v'
+	 (concat "\\Microsoft\\Microsoft SDKs\\Windows\\v"
+		 local-visual-studio:windows-sdk-version)))
+    (local-visual-studio--setq-registry-prefix-list
+     'local-visual-studio:windows-sdk-dir
+     reg-path
+     "InstallationFolder")))
 
 (provide 'local-visual-studio)
 ;;; local-visual-studio.el ends here
