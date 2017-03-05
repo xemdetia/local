@@ -37,12 +37,14 @@ failed key lookup writes to *Messages*"
 	       (concat exe arg)))
       (goto-char (point-min)) ; critical: leave point here for later regex
       (flush-lines "^$")
-      (if (re-search-forward "^ERROR: The system was unable to find the specified registry key or value" nil t)
-	  (progn
-	    (message (concat "local-windows-nt: Could not find (" path " . " key ")"))
-	    nil)
-	(when (search-forward "REG_" nil nil 1) ; only take first occurance
-	  (nth 2 (split-string (thing-at-point 'line) "    " t "\r?\n")))))))
+      (cond ((re-search-forward "^ERROR: The system was unable to find the specified registry key or value" nil t)
+	     (message (concat "local-windows-nt: Could not find path (" path " . " key ")"))
+	     nil)
+	    ((re-search-forward "^ERROR: Invalid key name." nil t)
+	     (message (concat "local-windows-nt: Could not find key at path (" path " . " key ")"))
+	     nil)
+	    (t (when (search-forward "REG_" nil nil 1) ; only take first occurance
+		 (nth 2 (split-string (thing-at-point 'line) "    " t "\r?\n"))))))))
 
 ;;; Initialization Section:
 (load-windows-nt--install-shell-file)
