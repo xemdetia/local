@@ -30,6 +30,10 @@ init.")
   "Maps to environment variable WindowsSDKVersion.
 By default it is '10.0' to match Windows 10")
 
+(defvar local-visual-studio:windows-sdk-version-detailed "10.0.10586.0"
+  "Set the detailed requested SDK version.
+Should match `local-visual-studio:windows-sdk-version''s major version.  Currently matches a Windows 10 version")
+
 (defvar local-visual-studio:windows-sdk-lib-version "winv6.3\\"
   "Maps to environment variable WindowsSDKLibVersion.
 Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
@@ -76,9 +80,16 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
 (defun local-visual-studio-install ()
   "Install visual studio environment into Emacs session."
   (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir)
-  ; PATH
+  ;; PATH
   (setenv "PATH" (concat (concat local-visual-studio:windows-sdk-dir "bin\\x86;") (getenv "PATH")))
   (add-to-list 'exec-path (replace-regexp-in-string "\\\\" "/" (concat local-visual-studio:windows-sdk-dir "bin\\x86")))
+  ;; INCLUDE, separated like batch file indicates
+  (let ((include-a (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\shared"))
+	(include-b (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\um"))
+	(include-c (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\winrt")))
+    (setenv "INCLUDE" (concat
+		       (mapconcat 'identity (list include-a include-b include-c) ";")
+		       (getenv "INCLUDE"))))
   t)
 
 ;;; Initialization:
