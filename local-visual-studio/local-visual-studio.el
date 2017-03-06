@@ -44,6 +44,9 @@ Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
 (defvar local-visual-studio:windows-sdk-exec-path-x64 ""
   "Maps to environment variable WindowsSDK_ExecutablePath_x64.")
 
+(defvar local-visual-studio:vc-install-dir ""
+  "Maps to environment variable VCINSTALLDIR.")
+
 (defvar-local local-visual-studio--prefix-list
   '("HKLM\\SOFTWARE\\Wow6432Node"
     "HKCU\\SOFTWARE\\Wow6432Node"
@@ -51,12 +54,47 @@ Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
     "HKCU\\SOFTWARE")
   "This is a common list copied with `copy-sequence' and is extracted from the visual studio batch files. It seems necessary to handle registry complexity on various versions of windows, and is provided in the order in `local-visual-studio.el'. It is not recommended to modify this list.")
 
+(defvar-local local-visual-studio--prefix-list-2
+  '("HKLM\\SOFTWARE"
+    "HKCU\\SOFTWARE"
+    "HKLM\\SOFTWARE\\Wow6432Node"
+    "HKCU\\SOFTWARE\\Wow6432Node")
+  "This is a common list copied with `copy-sequence' and is
+  extracted from the visual studio batch files. It seems
+  necessary to handle registry complexity on various versions of
+  windows, and is provided in the order in
+  `local-visual-studio.el'. It is a slightly different order from
+  `local-visual-studio--prefix-list' and seems isolated to the
+  visual studio install dir. It is not recommended to modify this
+  list.")
+
 ;;; Code:
 (defun local-visual-studio--setq-registry-prefix-list (var path key)
   "Directly set VAR from registry PATH and KEY.
 
 This uses the local prefix-list to find the first match of a PATH KEY using the visual studio specific prefix list for paths.  This is duplicated constantly through the batch files as helpers for various subroutines, and would have to be done here as well if not factored out."
   (let ((prefix-list (copy-sequence local-visual-studio--prefix-list))
+	(seeking t))
+    (while (and (> (length prefix-list) 0)
+		seeking)
+      (when (set (intern-soft (symbol-name var))
+		 (load-windows-nt--get-registry-value
+		  (concat (pop prefix-list) path)
+		  key))
+	(setq seeking nil)))
+    (not seeking))) ; not looking? found one
+
+(defun local-visual-studio--setq-registry-prefix-list-2 (var path key)
+  "Directly set VAR from registry PATH and KEY.
+
+This uses the local prefix-list to find the first match of a PATH
+KEY using the visual studio specific prefix list for paths.  This
+is duplicated constantly through the batch files as helpers for
+various subroutines, and would have to be done here as well if
+not factored out.  Nearly identical to
+`local-visual-studio--setq-registry-prefix-list' and likely
+candidate for refactoring."
+  (let ((prefix-list (copy-sequence local-visual-studio--prefix-list-2))
 	(seeking t))
     (while (and (> (length prefix-list) 0)
 		seeking)
@@ -77,6 +115,16 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
      reg-path
      "InstallationFolder")))
 
+(defun local-visual-studio--init-vc-install-dir ()
+  "Initialize `local-visual-studio:vc-install-dir'.
+Uses the prefix-list strategy, but in reverse order to match the batch
+files."
+  (let ((reg-path "\\Microsoft\\VisualStudio\\SxS\\VC7"))
+    (local-visual-studio--setq-registry-prefix-list-2
+     'local-visual-studio:vc-install-dir
+     reg-path
+     "14.0")))
+
 (defun local-visual-studio-install ()
   "Install visual studio environment into Emacs session."
   (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir)
@@ -94,6 +142,7 @@ This uses the local prefix-list to find the first match of a PATH KEY using the 
 
 ;;; Initialization:
 (local-visual-studio--init-windows-sdk-dir)
+(local-visual-studio--init-vc-install-dir)
 (local-visual-studio-install)
 
 (provide 'local-visual-studio)
