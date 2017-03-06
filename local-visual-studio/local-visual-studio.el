@@ -47,6 +47,9 @@ Defaults to 'winv6.3\' which is default in Visual Studio 2015.")
 (defvar local-visual-studio:vc-install-dir ""
   "Maps to environment variable VCINSTALLDIR.")
 
+(defvar local-visual-studio:ucrt-sdk-dir ""
+  "Maps to environment variable UniversalCRTSdkDir.")
+
 (defvar-local local-visual-studio--prefix-list
   '("HKLM\\SOFTWARE\\Wow6432Node"
     "HKCU\\SOFTWARE\\Wow6432Node"
@@ -125,6 +128,15 @@ files."
      reg-path
      "14.0")))
 
+(defun local-visual-studio--init-ucrt-sdk-dir ()
+  "Initialize `local-visual-studio:ucrt-sdk-dir'.
+Use the prefix-list strategy.  Seems to use Windows 10 hardcoded variable."
+  (let ((reg-path "\\Microsoft\\Windows Kits\\Installed Roots"))
+    (local-visual-studio--setq-registry-prefix-list
+     'local-visual-studio:ucrt-sdk-dir
+     reg-path
+     "KitsRoot10")))
+
 (defun local-visual-studio-install ()
   "Install visual studio environment into Emacs session."
   (setenv "WindowsSdkDir" local-visual-studio:windows-sdk-dir)
@@ -150,6 +162,7 @@ files."
 ;;; Initialization:
 (local-visual-studio--init-windows-sdk-dir)
 (local-visual-studio--init-vc-install-dir)
+(local-visual-studio--init-ucrt-sdk-dir)
 (local-visual-studio-install)
 
 (provide 'local-visual-studio)
