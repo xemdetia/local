@@ -131,12 +131,19 @@ files."
   ;; PATH
   (setenv "PATH" (concat (concat local-visual-studio:windows-sdk-dir "bin\\x86;") (getenv "PATH")))
   (add-to-list 'exec-path (replace-regexp-in-string "\\\\" "/" (concat local-visual-studio:windows-sdk-dir "bin\\x86")))
-  ;; INCLUDE, separated like batch file indicates
-  (let ((include-a (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\shared"))
-	(include-b (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\um"))
-	(include-c (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\winrt")))
+  ;; INCLUDE, separated like batch file indicates and in order of
+  ;; actual appearance of evaluated batch file.
+  (let ((include-vc-a (concat local-visual-studio:vc-install-dir "INCLUDE"))
+	(include-vc-b (concat local-visual-studio:vc-install-dir "ATLMFC\\INCLUDE"))
+	(include-sdk-a (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\shared"))
+	(include-sdk-b (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\um"))
+	(include-sdk-c (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\winrt")))
     (setenv "INCLUDE" (concat
-		       (mapconcat 'identity (list include-a include-b include-c) ";")
+		       (mapconcat 'identity (list include-vc-a
+						  include-vc-b
+						  include-sdk-a
+						  include-sdk-b
+						  include-sdk-c) ";")
 		       (getenv "INCLUDE"))))
   t)
 
