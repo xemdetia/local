@@ -32,7 +32,7 @@ By default it is '10.0' to match Windows 10")
 
 (defvar local-visual-studio:windows-sdk-version-detailed "10.0.10586.0"
   "Set the detailed requested SDK version.
-Should match `local-visual-studio:windows-sdk-version''s major version.  Currently matches a Windows 10 version")
+Should match `local-visual-studio:windows-sdk-version''s major version.  Currently matches a Windows 10 version.  Also used for UCRTVersion environment variable.")
 
 (defvar local-visual-studio:windows-sdk-lib-version "winv6.3\\"
   "Maps to environment variable WindowsSDKLibVersion.
@@ -147,12 +147,14 @@ Use the prefix-list strategy.  Seems to use Windows 10 hardcoded variable."
   ;; actual appearance of evaluated batch file.
   (let ((include-vc-a (concat local-visual-studio:vc-install-dir "INCLUDE"))
 	(include-vc-b (concat local-visual-studio:vc-install-dir "ATLMFC\\INCLUDE"))
+	(include-ucrt (concat local-visual-studio:ucrt-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\ucrt"))
 	(include-sdk-a (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\shared"))
 	(include-sdk-b (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\um"))
 	(include-sdk-c (concat local-visual-studio:windows-sdk-dir "include\\" local-visual-studio:windows-sdk-version-detailed "\\winrt")))
     (setenv "INCLUDE" (concat
 		       (mapconcat 'identity (list include-vc-a
 						  include-vc-b
+						  include-ucrt
 						  include-sdk-a
 						  include-sdk-b
 						  include-sdk-c) ";")
