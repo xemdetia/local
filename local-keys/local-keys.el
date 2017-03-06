@@ -5,6 +5,9 @@
 
 ;;; Code:
 
+;; core emacs:
+(global-set-key (kbd "<f3>") 'grep-find)
+
 ;; flycheck:
 (global-set-key (kbd "<f2>") 'flycheck-list-errors)
 
