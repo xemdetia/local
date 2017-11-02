@@ -18,5 +18,8 @@
 (global-set-key (kbd "<f9>") 'ace-jump-mode)
 (global-set-key (kbd "<C-f9>") 'ace-jump-word-mode)
 
+;; whitespace-mode
+(global-set-key (kbd "<f8>") 'whitespace-mode)
+
 (provide 'local-keys)
 ;;; local-keys ends here
