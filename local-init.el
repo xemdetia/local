@@ -17,5 +17,16 @@
   (require 'local-windows-nt)
   (require 'local-visual-studio))
 
+(defun local-init-install ()
+  "Install core packages."
+  (interactive)
+  (require 'package)
+  (package-refresh-contents)
+  (package-install 'ace-jump-mode)
+  (package-install 'magit)
+  (package-install 'git-gutter)
+  (package-install 'rainbow-delimiters)
+  (package-install 'flycheck))
+
 (provide 'local-init)
 ;;; local-init.el ends here
