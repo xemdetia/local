@@ -28,5 +28,7 @@
   (package-install 'rainbow-delimiters)
   (package-install 'flycheck))
 
+(global-git-gutter-mode +1)
+
 (provide 'local-init)
 ;;; local-init.el ends here
