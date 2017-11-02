@@ -30,5 +30,10 @@
 
 (global-git-gutter-mode +1)
 
+(add-hook 'emacs-lisp-mode-hook
+	  (lambda ()
+	    (flycheck-mode)
+	    (rainbow-delimiters-mode)))
+
 (provide 'local-init)
 ;;; local-init.el ends here
