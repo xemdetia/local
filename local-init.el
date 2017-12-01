@@ -28,7 +28,9 @@
   (package-install 'rainbow-delimiters)
   (package-install 'flycheck))
 
-(global-git-gutter-mode +1)
+(if (boundp 'global-git-gutter-mode)
+    (global-git-gutter-mode +1)
+  (message "local-init: global-git-gutter-mode does not exist, did you run local-init-install?"))
 
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
